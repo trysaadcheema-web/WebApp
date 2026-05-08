@@ -1,1 +1,850 @@
-<h1>Hello World</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="description" content="Live News — Tech, World, Finance">
+<title>PULSE — Live News</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --tech: #00d4ff;
+    --world: #ff6b35;
+    --finance: #00ff88;
+    --card-bg: #13131c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grain effect */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* Header */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0 10px;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, #fff 0%, #6b6b80 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .live-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--finance);
+    letter-spacing: 2px;
+  }
+
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--finance);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  .time-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 0;
+  }
+
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    flex-shrink: 0;
+    padding: 10px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .tab.active-tech { color: var(--tech); border-bottom-color: var(--tech); }
+  .tab.active-world { color: var(--world); border-bottom-color: var(--world); }
+  .tab.active-finance { color: var(--finance); border-bottom-color: var(--finance); }
+
+  /* Ticker */
+  .ticker-wrap {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    padding: 8px 0;
+  }
+
+  .ticker {
+    display: flex;
+    gap: 40px;
+    animation: ticker 30s linear infinite;
+    white-space: nowrap;
+  }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .ticker-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
+
+  .ticker-item span {
+    color: var(--finance);
+    margin-right: 4px;
+  }
+
+  /* Main content */
+  main {
+    position: relative;
+    z-index: 1;
+    padding: 16px;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* Category header */
+  .cat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cat-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+  }
+
+  .cat-title.tech { color: var(--tech); }
+  .cat-title.world { color: var(--world); }
+  .cat-title.finance { color: var(--finance); }
+
+  .refresh-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+
+  .refresh-btn:hover {
+    border-color: var(--text);
+    color: var(--text);
+  }
+
+  .refresh-btn.loading {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* News cards */
+  .news-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .news-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    animation: fadeIn 0.4s ease forwards;
+    opacity: 0;
+    text-decoration: none;
+    display: block;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .news-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    border-radius: 12px 0 0 12px;
+  }
+
+  .news-card.tech::before { background: var(--tech); }
+  .news-card.world::before { background: var(--world); }
+  .news-card.finance::before { background: var(--finance); }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .news-card:hover {
+    border-color: rgba(255,255,255,0.15);
+    transform: translateY(-2px);
+    background: #17171f;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .source-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .source-badge.tech { background: rgba(0,212,255,0.1); color: var(--tech); }
+  .source-badge.world { background: rgba(255,107,53,0.1); color: var(--world); }
+  .source-badge.finance { background: rgba(0,255,136,0.1); color: var(--finance); }
+
+  .card-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-arrow {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 16px;
+    opacity: 0;
+    transition: all 0.2s;
+  }
+
+  .news-card:hover .card-arrow {
+    opacity: 1;
+    right: 12px;
+  }
+
+  /* Loading state */
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .skeleton {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  .skel-line {
+    height: 10px;
+    background: var(--bg3);
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+
+  .skel-line.short { width: 40%; }
+  .skel-line.long { width: 90%; }
+  .skel-line.mid { width: 70%; }
+
+  /* Error state */
+  .error-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+  }
+
+  .error-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+
+  .error-text {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .retry-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  /* Notification button */
+  .notif-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    transition: all 0.2s;
+  }
+
+  .notif-btn:hover {
+    background: var(--bg2);
+    transform: scale(1.05);
+  }
+
+  .notif-btn.active {
+    background: rgba(0,255,136,0.1);
+    border-color: var(--finance);
+  }
+
+  /* New badge */
+  .new-badge {
+    display: inline-block;
+    background: var(--world);
+    color: #fff;
+    font-size: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
+    font-weight: 700;
+  }
+
+  /* Install banner */
+  .install-banner {
+    display: none;
+    position: fixed;
+    bottom: 80px;
+    left: 16px;
+    right: 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    z-index: 200;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+
+  .install-banner.show { display: flex; }
+
+  .install-text { font-size: 13px; flex: 1; }
+  .install-text strong { display: block; margin-bottom: 2px; }
+  .install-text span { font-size: 11px; color: var(--muted); }
+
+  .install-btn {
+    background: var(--finance);
+    color: #000;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .close-banner {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* Count badge */
+  .count-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    background: var(--bg3);
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="logo">PULSE</div>
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      LIVE
+    </div>
+    <div class="time-display" id="clock">--:--</div>
+  </div>
+  <div class="tabs">
+    <button class="tab active-tech" onclick="switchTab('tech')">⚡ Tech</button>
+    <button class="tab" onclick="switchTab('world')">🌍 World</button>
+    <button class="tab" onclick="switchTab('finance')">📈 Finance</button>
+  </div>
+</header>
+
+<div class="ticker-wrap">
+  <div class="ticker" id="ticker">
+    <span class="ticker-item"><span>TECH</span> Loading latest headlines...</span>
+    <span class="ticker-item"><span>WORLD</span> Fetching global news...</span>
+    <span class="ticker-item"><span>FINANCE</span> Getting market updates...</span>
+    <span class="ticker-item"><span>TECH</span> Loading latest headlines...</span>
+    <span class="ticker-item"><span>WORLD</span> Fetching global news...</span>
+    <span class="ticker-item"><span>FINANCE</span> Getting market updates...</span>
+  </div>
+</div>
+
+<main>
+  <div class="cat-header">
+    <div class="cat-title tech" id="catTitle">⚡ TECHNOLOGY</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="count-badge" id="countBadge">0 articles</span>
+      <button class="refresh-btn" id="refreshBtn" onclick="refreshNews()">↻ REFRESH</button>
+    </div>
+  </div>
+  <div id="newsContainer"></div>
+</main>
+
+<button class="notif-btn" id="notifBtn" onclick="toggleNotifications()" title="Notifications">🔔</button>
+
+<div class="install-banner" id="installBanner">
+  <div class="install-text">
+    <strong>Install PULSE</strong>
+    <span>Add to home screen for offline access</span>
+  </div>
+  <button class="install-btn" id="installBtn">Install</button>
+  <button class="close-banner" onclick="document.getElementById('installBanner').classList.remove('show')">×</button>
+</div>
+
+<script>
+// ============================================
+// CONFIG — RSS Sources
+// ============================================
+const PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
+
+const SOURCES = {
+  tech: [
+    { name: 'TechCrunch', url: 'https://techcrunch.com/feed/' },
+    { name: 'The Verge', url: 'https://www.theverge.com/rss/index.xml' },
+    { name: 'Ars Technica', url: 'https://feeds.arstechnica.com/arstechnica/index' },
+  ],
+  world: [
+    { name: 'BBC News', url: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
+    { name: 'Reuters', url: 'https://feeds.reuters.com/reuters/worldNews' },
+    { name: 'Al Jazeera', url: 'https://www.aljazeera.com/xml/rss/all.xml' },
+  ],
+  finance: [
+    { name: 'CoinDesk', url: 'https://www.coindesk.com/arc/outboundfeeds/rss/' },
+    { name: 'MarketWatch', url: 'https://feeds.content.dowjones.io/public/rss/mw_realtimeheadlines' },
+    { name: 'Reuters Finance', url: 'https://feeds.reuters.com/reuters/businessNews' },
+  ]
+};
+
+const CAT_INFO = {
+  tech:    { label: '⚡ TECHNOLOGY', color: 'tech' },
+  world:   { label: '🌍 WORLD NEWS', color: 'world' },
+  finance: { label: '📈 FINANCE',    color: 'finance' },
+};
+
+// ============================================
+// STATE
+// ============================================
+let currentTab = 'tech';
+let cache = { tech: [], world: [], finance: [] };
+let notifEnabled = false;
+let autoRefreshTimer = null;
+let deferredPrompt = null;
+let seenLinks = new Set(JSON.parse(localStorage.getItem('seenLinks') || '[]'));
+
+// ============================================
+// CLOCK
+// ============================================
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ============================================
+// TAB SWITCH
+// ============================================
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => {
+    t.className = 'tab';
+  });
+  const tabs = document.querySelectorAll('.tab');
+  const idx = ['tech','world','finance'].indexOf(tab);
+  tabs[idx].className = `tab active-${tab}`;
+
+  const info = CAT_INFO[tab];
+  const titleEl = document.getElementById('catTitle');
+  titleEl.textContent = info.label;
+  titleEl.className = `cat-title ${info.color}`;
+
+  if (cache[tab].length > 0) {
+    renderNews(cache[tab], tab);
+  } else {
+    fetchNews(tab);
+  }
+}
+
+// ============================================
+// FETCH NEWS
+// ============================================
+async function fetchNews(tab) {
+  showLoading();
+  const sources = SOURCES[tab];
+  let allItems = [];
+
+  for (const source of sources) {
+    try {
+      const url = `${PROXY}${encodeURIComponent(source.url)}&count=10`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.status === 'ok' && data.items) {
+        const items = data.items.map(item => ({
+          ...item,
+          sourceName: source.name,
+          category: tab
+        }));
+        allItems = allItems.concat(items);
+      }
+    } catch (e) {
+      console.warn('Feed failed:', source.name);
+    }
+  }
+
+  if (allItems.length === 0) {
+    showError(tab);
+    return;
+  }
+
+  // Sort by date
+  allItems.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+
+  // Remove duplicates
+  const seen = new Set();
+  allItems = allItems.filter(item => {
+    if (seen.has(item.link)) return false;
+    seen.add(item.link);
+    return true;
+  });
+
+  cache[tab] = allItems;
+  updateTicker(allItems, tab);
+
+  // Check for new articles
+  const newItems = allItems.filter(item => !seenLinks.has(item.link));
+  if (newItems.length > 0 && notifEnabled && tab === currentTab) {
+    sendNotification(newItems[0], tab);
+  }
+
+  // Mark all as seen
+  allItems.forEach(item => seenLinks.add(item.link));
+  localStorage.setItem('seenLinks', JSON.stringify([...seenLinks].slice(-200)));
+
+  renderNews(allItems, tab);
+}
+
+// ============================================
+// RENDER
+// ============================================
+function renderNews(items, tab) {
+  const container = document.getElementById('newsContainer');
+  const countBadge = document.getElementById('countBadge');
+  countBadge.textContent = `${items.length} articles`;
+
+  container.innerHTML = items.map((item, i) => {
+    const isNew = !seenLinks.has(item.link) || i < 3;
+    const timeAgo = getTimeAgo(item.pubDate);
+    const desc = item.description
+      ? item.description.replace(/<[^>]*>/g, '').trim().slice(0, 120) + '...'
+      : '';
+
+    return `
+      <a class="news-card ${tab}" href="${item.link}" target="_blank" rel="noopener"
+         style="animation-delay: ${i * 0.05}s">
+        <div class="card-meta">
+          <span class="source-badge ${tab}">${item.sourceName}</span>
+          ${i < 3 ? '<span class="new-badge">NEW</span>' : ''}
+          <span class="card-time">${timeAgo}</span>
+        </div>
+        <div class="card-title">${item.title}</div>
+        ${desc ? `<div class="card-desc">${desc}</div>` : ''}
+        <span class="card-arrow">→</span>
+      </a>
+    `;
+  }).join('');
+}
+
+// ============================================
+// LOADING / ERROR
+// ============================================
+function showLoading() {
+  document.getElementById('newsContainer').innerHTML = `
+    <div class="loading-state">
+      ${[1,2,3,4].map(() => `
+        <div class="skeleton">
+          <div class="skel-line short"></div>
+          <div class="skel-line long"></div>
+          <div class="skel-line mid"></div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  document.getElementById('countBadge').textContent = 'Loading...';
+}
+
+function showError(tab) {
+  document.getElementById('newsContainer').innerHTML = `
+    <div class="error-state">
+      <div class="error-icon">📡</div>
+      <div class="error-text">Could not fetch news. Check your connection.</div>
+      <button class="retry-btn" onclick="fetchNews('${tab}')">Try Again</button>
+    </div>
+  `;
+  document.getElementById('countBadge').textContent = '0 articles';
+}
+
+// ============================================
+// REFRESH
+// ============================================
+function refreshNews() {
+  const btn = document.getElementById('refreshBtn');
+  btn.textContent = '↻';
+  btn.classList.add('loading');
+  cache[currentTab] = [];
+  fetchNews(currentTab).then(() => {
+    btn.classList.remove('loading');
+    btn.textContent = '↻ REFRESH';
+  });
+}
+
+// ============================================
+// TICKER UPDATE
+// ============================================
+function updateTicker(items, tab) {
+  const ticker = document.getElementById('ticker');
+  const top5 = items.slice(0, 5);
+  const label = tab.toUpperCase();
+  const html = top5.map(item =>
+    `<span class="ticker-item"><span>${label}</span> ${item.title}</span>`
+  ).join('');
+  ticker.innerHTML = html + html; // duplicate for infinite scroll
+}
+
+// ============================================
+// TIME AGO
+// ============================================
+function getTimeAgo(dateStr) {
+  const now = new Date();
+  const then = new Date(dateStr);
+  const diff = Math.floor((now - then) / 1000);
+  if (diff < 60) return `${diff}s ago`;
+  if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+  return `${Math.floor(diff/86400)}d ago`;
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+async function toggleNotifications() {
+  const btn = document.getElementById('notifBtn');
+  if (notifEnabled) {
+    notifEnabled = false;
+    btn.textContent = '🔔';
+    btn.classList.remove('active');
+    clearInterval(autoRefreshTimer);
+    return;
+  }
+
+  if (!('Notification' in window)) {
+    alert('Notifications not supported in this browser.');
+    return;
+  }
+
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') {
+    notifEnabled = true;
+    btn.textContent = '🔕';
+    btn.classList.add('active');
+    // Auto refresh every 5 minutes
+    autoRefreshTimer = setInterval(() => {
+      cache[currentTab] = [];
+      fetchNews(currentTab);
+    }, 5 * 60 * 1000);
+    alert('✅ Notifications enabled! News will refresh every 5 minutes.');
+  } else {
+    alert('Please allow notifications to use this feature.');
+  }
+}
+
+function sendNotification(item, tab) {
+  if (!notifEnabled) return;
+  const icons = { tech: '⚡', world: '🌍', finance: '📈' };
+  new Notification(`${icons[tab]} PULSE — ${item.sourceName}`, {
+    body: item.title,
+    icon: '/WebApp/icon.png',
+    badge: '/WebApp/icon.png'
+  });
+}
+
+// ============================================
+// PWA INSTALL
+// ============================================
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBanner').classList.add('show');
+});
+
+document.getElementById('installBtn').addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    document.getElementById('installBanner').classList.remove('show');
+  }
+});
+
+// ============================================
+// SERVICE WORKER
+// ============================================
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/WebApp/sw.js').catch(() => {});
+}
+
+// ============================================
+// INIT
+// ============================================
+fetchNews('tech');
+</script>
+</body>
+</html>
