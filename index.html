@@ -1,491 +1,160 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0a0a0f">
-<meta name="description" content="Live News — Tech, World, Finance">
+<meta name="description" content="PULSE — Live News">
 <title>PULSE — Live News</title>
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --bg2: #111118;
-    --bg3: #1a1a24;
-    --border: rgba(255,255,255,0.07);
-    --text: #e8e8f0;
-    --muted: #6b6b80;
-    --tech: #00d4ff;
-    --world: #ff6b35;
-    --finance: #00ff88;
-    --card-bg: #13131c;
-  }
+[data-theme="dark"] {
+  --bg:#0a0a0f; --bg2:#111118; --bg3:#1a1a24;
+  --card:#13131c; --card-h:#17171f;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
+  --text:#e8e8f0; --text2:#b0b0c0; --muted:#6b6b80;
+  --shadow:rgba(0,0,0,0.5);
+  --tech:#00d4ff; --world:#ff6b35; --finance:#00ff88;
+}
+[data-theme="light"] {
+  --bg:#f5f4f0; --bg2:#eceae4; --bg3:#e2e0d8;
+  --card:#ffffff; --card-h:#f9f8f5;
+  --border:rgba(0,0,0,0.08); --border2:rgba(0,0,0,0.16);
+  --text:#1a1a1a; --text2:#3a3a3a; --muted:#888880;
+  --shadow:rgba(0,0,0,0.1);
+  --tech:#0088cc; --world:#cc4400; --finance:#007744;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s;}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+/* HEADER */
+header{position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);padding:0 16px;}
+[data-theme="dark"] header{background:rgba(10,10,15,0.94);backdrop-filter:blur(20px);}
+[data-theme="light"] header{background:rgba(245,244,240,0.94);backdrop-filter:blur(20px);}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:12px 0 8px;gap:10px;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:4px;}
+[data-theme="dark"] .logo{background:linear-gradient(135deg,#fff,#6b6b80);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+[data-theme="light"] .logo{background:linear-gradient(135deg,#1a1a1a,#888880);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 
-  /* Background grain effect */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
-  }
+.header-right{display:flex;align-items:center;gap:8px;}
+.live-badge{display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--finance);letter-spacing:2px;}
+.live-dot{width:5px;height:5px;background:var(--finance);border-radius:50%;animation:pdot 1.5s infinite;}
+@keyframes pdot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
 
-  /* Header */
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(10,10,15,0.92);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 16px;
-  }
+.clock{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
 
-  .header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 0 10px;
-  }
+/* THEME TOGGLE */
+.theme-toggle{width:46px;height:25px;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;cursor:pointer;position:relative;transition:all .3s;flex-shrink:0;}
+.theme-toggle::after{content:'';position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:var(--muted);transition:all .3s;}
+[data-theme="light"] .theme-toggle::after{transform:translateX(21px);background:var(--text);}
+.t-icon{position:absolute;top:50%;transform:translateY(-50%);font-size:9px;pointer-events:none;}
+.t-icon.moon{left:4px;} .t-icon.sun{right:4px;}
 
-  .logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    letter-spacing: 4px;
-    background: linear-gradient(135deg, #fff 0%, #6b6b80 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+/* SEARCH */
+.search-wrap{padding:8px 0;position:relative;}
+.search-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:9px 36px 9px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;transition:all .2s;}
+.search-input::placeholder{color:var(--muted);}
+.search-input:focus{border-color:var(--border2);}
+.s-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none;}
+.s-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:17px;cursor:pointer;background:none;border:none;display:none;padding:2px 5px;}
 
-  .live-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--finance);
-    letter-spacing: 2px;
-  }
+/* TABS */
+.tabs{display:flex;overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex-shrink:0;padding:8px 18px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;text-transform:uppercase;}
+.tab.at{color:var(--tech);border-bottom-color:var(--tech);}
+.tab.aw{color:var(--world);border-bottom-color:var(--world);}
+.tab.af{color:var(--finance);border-bottom-color:var(--finance);}
+.tab.as{color:var(--text);border-bottom-color:var(--text);}
 
-  .live-dot {
-    width: 6px;
-    height: 6px;
-    background: var(--finance);
-    border-radius: 50%;
-    animation: pulse 1.5s infinite;
-  }
+/* TICKER */
+.ticker-wrap{background:var(--bg2);border-bottom:1px solid var(--border);overflow:hidden;padding:7px 0;}
+.ticker{display:flex;gap:48px;animation:tick 40s linear infinite;white-space:nowrap;}
+@keyframes tick{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.ticker-item{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);flex-shrink:0;}
+.ticker-item span{color:var(--finance);margin-right:4px;}
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.8); }
-  }
+/* FILTER BAR */
+.filter-bar{display:flex;gap:8px;padding:12px 16px 0;overflow-x:auto;scrollbar-width:none;}
+.filter-bar::-webkit-scrollbar{display:none;}
+.chip{flex-shrink:0;padding:5px 12px;border-radius:20px;font-size:10px;font-family:'JetBrains Mono',monospace;cursor:pointer;border:1px solid var(--border);background:var(--bg2);color:var(--muted);transition:all .2s;}
+.chip.active{background:var(--bg3);color:var(--text);border-color:var(--border2);}
 
-  .time-display {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-  }
+/* MAIN */
+main{position:relative;z-index:1;padding:12px 16px 90px;max-width:680px;margin:0 auto;}
 
-  /* Tabs */
-  .tabs {
-    display: flex;
-    gap: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding-bottom: 0;
-  }
+.cat-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.cat-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;}
+.cat-title.tech{color:var(--tech);} .cat-title.world{color:var(--world);} .cat-title.finance{color:var(--finance);} .cat-title.saved{color:var(--text);}
+.h-right{display:flex;align-items:center;gap:8px;}
+.count{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);background:var(--bg3);padding:3px 8px;border-radius:20px;border:1px solid var(--border);}
+.ref-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s;}
+.ref-btn:hover{border-color:var(--text);color:var(--text);}
+.ref-btn.spin{animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-  .tabs::-webkit-scrollbar { display: none; }
+/* CARDS */
+.news-grid{display:flex;flex-direction:column;gap:10px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 14px 14px 17px;transition:all .2s;animation:fadeUp .35s ease forwards;opacity:0;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:12px 0 0 12px;}
+.card.tech::before{background:var(--tech);} .card.world::before{background:var(--world);} .card.finance::before{background:var(--finance);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 4px 20px var(--shadow);background:var(--card-h);}
 
-  .tab {
-    flex-shrink: 0;
-    padding: 10px 20px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    color: var(--muted);
-    cursor: pointer;
-    border: none;
-    background: none;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    text-transform: uppercase;
-  }
+.card-top{display:flex;align-items:center;gap:6px;margin-bottom:7px;}
+.src-badge{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;font-weight:600;}
+.src-badge.tech{background:rgba(0,212,255,0.1);color:var(--tech);}
+.src-badge.world{background:rgba(255,107,53,0.1);color:var(--world);}
+.src-badge.finance{background:rgba(0,255,136,0.1);color:var(--finance);}
+.new-pill{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;letter-spacing:1px;background:var(--world);color:#fff;padding:2px 5px;border-radius:3px;}
+.card-time{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-left:auto;}
+.card-title{font-size:14px;font-weight:600;line-height:1.45;color:var(--text);margin-bottom:5px;}
+.card-desc{font-size:12px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.card-actions{display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid var(--border);}
+.c-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:3px 7px;border-radius:4px;transition:all .15s;font-family:'JetBrains Mono',monospace;font-size:10px;display:flex;align-items:center;gap:3px;}
+.c-btn:hover{color:var(--text);background:var(--bg3);}
+.c-btn.saved-on{color:var(--finance);}
+.read-lnk{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:3px;transition:color .2s;}
+.read-lnk:hover{color:var(--text);}
 
-  .tab.active-tech { color: var(--tech); border-bottom-color: var(--tech); }
-  .tab.active-world { color: var(--world); border-bottom-color: var(--world); }
-  .tab.active-finance { color: var(--finance); border-bottom-color: var(--finance); }
+/* EMPTY / ERROR */
+.empty{text-align:center;padding:50px 20px;color:var(--muted);}
+.empty .ico{font-size:34px;margin-bottom:12px;}
+.empty p{font-size:13px;line-height:1.6;}
+.retry{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:9px 18px;border-radius:8px;font-size:13px;cursor:pointer;margin-top:14px;}
 
-  /* Ticker */
-  .ticker-wrap {
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-    overflow: hidden;
-    padding: 8px 0;
-  }
+/* SKELETON */
+.skel-wrap{display:flex;flex-direction:column;gap:10px;}
+.skel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;}
+.sl{height:9px;background:var(--bg3);border-radius:4px;margin-bottom:8px;animation:shim 1.4s ease infinite;}
+@keyframes shim{0%,100%{opacity:.4;}50%{opacity:.8;}}
+.sl.s{width:35%;} .sl.m{width:65%;} .sl.l{width:90%;} .sl.xl{width:100%;}
 
-  .ticker {
-    display: flex;
-    gap: 40px;
-    animation: ticker 30s linear infinite;
-    white-space: nowrap;
-  }
+/* BOTTOM BAR */
+.bot-bar{position:fixed;bottom:0;left:0;right:0;border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:10px 0 14px;z-index:100;}
+[data-theme="dark"] .bot-bar{background:rgba(10,10,15,0.95);backdrop-filter:blur(20px);}
+[data-theme="light"] .bot-bar{background:rgba(245,244,240,0.95);backdrop-filter:blur(20px);}
+.bot-btn{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 14px;border-radius:8px;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.bot-btn span{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.5px;}
+.bot-btn.on{color:var(--finance);}
 
-  @keyframes ticker {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
+/* INSTALL */
+.inst-banner{display:none;position:fixed;bottom:75px;left:16px;right:16px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;z-index:200;align-items:center;gap:10px;box-shadow:0 8px 32px var(--shadow);}
+.inst-banner.show{display:flex;}
+.inst-text{flex:1;}
+.inst-text strong{font-size:13px;display:block;margin-bottom:2px;}
+.inst-text small{font-size:11px;color:var(--muted);}
+.inst-btn{background:var(--finance);color:#000;border:none;padding:7px 14px;border-radius:7px;font-weight:700;font-size:12px;cursor:pointer;flex-shrink:0;}
+.close-b{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;}
 
-  .ticker-item {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    flex-shrink: 0;
-  }
+/* TOAST */
+.toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:9px 18px;border-radius:30px;font-size:12px;font-family:'JetBrains Mono',monospace;opacity:0;transition:all .3s;z-index:300;white-space:nowrap;box-shadow:0 4px 20px var(--shadow);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-  .ticker-item span {
-    color: var(--finance);
-    margin-right: 4px;
-  }
-
-  /* Main content */
-  main {
-    position: relative;
-    z-index: 1;
-    padding: 16px;
-    max-width: 680px;
-    margin: 0 auto;
-  }
-
-  /* Category header */
-  .cat-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .cat-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 3px;
-  }
-
-  .cat-title.tech { color: var(--tech); }
-  .cat-title.world { color: var(--world); }
-  .cat-title.finance { color: var(--finance); }
-
-  .refresh-btn {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    cursor: pointer;
-    letter-spacing: 1px;
-    transition: all 0.2s;
-  }
-
-  .refresh-btn:hover {
-    border-color: var(--text);
-    color: var(--text);
-  }
-
-  .refresh-btn.loading {
-    animation: spin 1s linear infinite;
-  }
-
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  /* News cards */
-  .news-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .news-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    cursor: pointer;
-    transition: all 0.2s;
-    animation: fadeIn 0.4s ease forwards;
-    opacity: 0;
-    text-decoration: none;
-    display: block;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .news-card::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    border-radius: 12px 0 0 12px;
-  }
-
-  .news-card.tech::before { background: var(--tech); }
-  .news-card.world::before { background: var(--world); }
-  .news-card.finance::before { background: var(--finance); }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .news-card:hover {
-    border-color: rgba(255,255,255,0.15);
-    transform: translateY(-2px);
-    background: #17171f;
-  }
-
-  .card-meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-
-  .source-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-weight: 600;
-  }
-
-  .source-badge.tech { background: rgba(0,212,255,0.1); color: var(--tech); }
-  .source-badge.world { background: rgba(255,107,53,0.1); color: var(--world); }
-  .source-badge.finance { background: rgba(0,255,136,0.1); color: var(--finance); }
-
-  .card-time {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--muted);
-    margin-left: auto;
-  }
-
-  .card-title {
-    font-size: 15px;
-    font-weight: 600;
-    line-height: 1.4;
-    color: var(--text);
-    margin-bottom: 6px;
-  }
-
-  .card-desc {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .card-arrow {
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--muted);
-    font-size: 16px;
-    opacity: 0;
-    transition: all 0.2s;
-  }
-
-  .news-card:hover .card-arrow {
-    opacity: 1;
-    right: 12px;
-  }
-
-  /* Loading state */
-  .loading-state {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .skeleton {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    animation: shimmer 1.5s infinite;
-  }
-
-  @keyframes shimmer {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
-  }
-
-  .skel-line {
-    height: 10px;
-    background: var(--bg3);
-    border-radius: 4px;
-    margin-bottom: 8px;
-  }
-
-  .skel-line.short { width: 40%; }
-  .skel-line.long { width: 90%; }
-  .skel-line.mid { width: 70%; }
-
-  /* Error state */
-  .error-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--muted);
-  }
-
-  .error-icon {
-    font-size: 32px;
-    margin-bottom: 12px;
-  }
-
-  .error-text {
-    font-size: 13px;
-    margin-bottom: 16px;
-  }
-
-  .retry-btn {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    cursor: pointer;
-  }
-
-  /* Notification button */
-  .notif-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 16px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    color: var(--text);
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    cursor: pointer;
-    z-index: 100;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    transition: all 0.2s;
-  }
-
-  .notif-btn:hover {
-    background: var(--bg2);
-    transform: scale(1.05);
-  }
-
-  .notif-btn.active {
-    background: rgba(0,255,136,0.1);
-    border-color: var(--finance);
-  }
-
-  /* New badge */
-  .new-badge {
-    display: inline-block;
-    background: var(--world);
-    color: #fff;
-    font-size: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 1px;
-    padding: 2px 6px;
-    border-radius: 3px;
-    margin-left: 6px;
-    vertical-align: middle;
-    font-weight: 700;
-  }
-
-  /* Install banner */
-  .install-banner {
-    display: none;
-    position: fixed;
-    bottom: 80px;
-    left: 16px;
-    right: 16px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    z-index: 200;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-  }
-
-  .install-banner.show { display: flex; }
-
-  .install-text { font-size: 13px; flex: 1; }
-  .install-text strong { display: block; margin-bottom: 2px; }
-  .install-text span { font-size: 11px; color: var(--muted); }
-
-  .install-btn {
-    background: var(--finance);
-    color: #000;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 12px;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-
-  .close-banner {
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-size: 18px;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-
-  /* Count badge */
-  .count-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    background: var(--bg3);
-    padding: 3px 8px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-  }
+/* SEARCH LABEL */
+.srch-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:12px;padding:6px 0;border-bottom:1px solid var(--border);}
 </style>
 </head>
 <body>
@@ -493,358 +162,215 @@
 <header>
   <div class="header-top">
     <div class="logo">PULSE</div>
-    <div class="live-badge">
-      <div class="live-dot"></div>
-      LIVE
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <div class="header-right">
+      <div class="clock" id="clock">--:--</div>
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span class="t-icon moon">🌙</span>
+        <span class="t-icon sun">☀️</span>
+      </button>
     </div>
-    <div class="time-display" id="clock">--:--</div>
+  </div>
+  <div class="search-wrap">
+    <input class="search-input" id="srchIn" type="text" placeholder="Search news..." oninput="handleSearch(this.value)">
+    <span class="s-icon" id="sIcon">🔍</span>
+    <button class="s-clear" id="sClear" onclick="clearSearch()">×</button>
   </div>
   <div class="tabs">
-    <button class="tab active-tech" onclick="switchTab('tech')">⚡ Tech</button>
-    <button class="tab" onclick="switchTab('world')">🌍 World</button>
-    <button class="tab" onclick="switchTab('finance')">📈 Finance</button>
+    <button class="tab at" onclick="switchTab('tech')">⚡ Tech</button>
+    <button class="tab"    onclick="switchTab('world')">🌍 World</button>
+    <button class="tab"    onclick="switchTab('finance')">📈 Finance</button>
+    <button class="tab"    onclick="switchTab('saved')">🔖 Saved</button>
   </div>
 </header>
 
 <div class="ticker-wrap">
   <div class="ticker" id="ticker">
-    <span class="ticker-item"><span>TECH</span> Loading latest headlines...</span>
-    <span class="ticker-item"><span>WORLD</span> Fetching global news...</span>
-    <span class="ticker-item"><span>FINANCE</span> Getting market updates...</span>
-    <span class="ticker-item"><span>TECH</span> Loading latest headlines...</span>
-    <span class="ticker-item"><span>WORLD</span> Fetching global news...</span>
-    <span class="ticker-item"><span>FINANCE</span> Getting market updates...</span>
+    <span class="ticker-item"><span>PULSE</span>Loading live news...</span>
+    <span class="ticker-item"><span>TECH</span>Fetching updates...</span>
+    <span class="ticker-item"><span>WORLD</span>Global headlines...</span>
+    <span class="ticker-item"><span>PULSE</span>Loading live news...</span>
+    <span class="ticker-item"><span>TECH</span>Fetching updates...</span>
+    <span class="ticker-item"><span>WORLD</span>Global headlines...</span>
   </div>
 </div>
+
+<div class="filter-bar" id="filterBar"></div>
 
 <main>
   <div class="cat-header">
     <div class="cat-title tech" id="catTitle">⚡ TECHNOLOGY</div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span class="count-badge" id="countBadge">0 articles</span>
-      <button class="refresh-btn" id="refreshBtn" onclick="refreshNews()">↻ REFRESH</button>
+    <div class="h-right">
+      <span class="count" id="countBadge">—</span>
+      <button class="ref-btn" id="refBtn" onclick="refreshCurrent()">↻</button>
     </div>
   </div>
-  <div id="newsContainer"></div>
+  <div id="container"></div>
 </main>
 
-<button class="notif-btn" id="notifBtn" onclick="toggleNotifications()" title="Notifications">🔔</button>
-
-<div class="install-banner" id="installBanner">
-  <div class="install-text">
-    <strong>Install PULSE</strong>
-    <span>Add to home screen for offline access</span>
-  </div>
-  <button class="install-btn" id="installBtn">Install</button>
-  <button class="close-banner" onclick="document.getElementById('installBanner').classList.remove('show')">×</button>
+<div class="bot-bar">
+  <button class="bot-btn" id="notifBtn" onclick="toggleNotif()">🔔<span>ALERTS</span></button>
+  <button class="bot-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑<span>TOP</span></button>
+  <button class="bot-btn" onclick="shareApp()">🔗<span>SHARE</span></button>
 </div>
 
-<script>
-// ============================================
-// CONFIG — RSS Sources
-// ============================================
-const PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
+<div class="inst-banner" id="instBanner">
+  <div class="inst-text"><strong>Install PULSE</strong><small>Home screen + offline</small></div>
+  <button class="inst-btn" id="instBtn">Install</button>
+  <button class="close-b" onclick="document.getElementById('instBanner').classList.remove('show')">×</button>
+</div>
 
+<div class="toast" id="toast"></div>
+
+<script>
+const PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
 const SOURCES = {
-  tech: [
-    { name: 'TechCrunch', url: 'https://techcrunch.com/feed/' },
-    { name: 'The Verge', url: 'https://www.theverge.com/rss/index.xml' },
-    { name: 'Ars Technica', url: 'https://feeds.arstechnica.com/arstechnica/index' },
+  tech:[
+    {name:'TechCrunch', url:'https://techcrunch.com/feed/'},
+    {name:'The Verge',  url:'https://www.theverge.com/rss/index.xml'},
+    {name:'Ars Technica',url:'https://feeds.arstechnica.com/arstechnica/index'},
   ],
-  world: [
-    { name: 'BBC News', url: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
-    { name: 'Reuters', url: 'https://feeds.reuters.com/reuters/worldNews' },
-    { name: 'Al Jazeera', url: 'https://www.aljazeera.com/xml/rss/all.xml' },
+  world:[
+    {name:'BBC News',  url:'https://feeds.bbci.co.uk/news/world/rss.xml'},
+    {name:'Reuters',   url:'https://feeds.reuters.com/reuters/worldNews'},
+    {name:'Al Jazeera',url:'https://www.aljazeera.com/xml/rss/all.xml'},
   ],
-  finance: [
-    { name: 'CoinDesk', url: 'https://www.coindesk.com/arc/outboundfeeds/rss/' },
-    { name: 'MarketWatch', url: 'https://feeds.content.dowjones.io/public/rss/mw_realtimeheadlines' },
-    { name: 'Reuters Finance', url: 'https://feeds.reuters.com/reuters/businessNews' },
+  finance:[
+    {name:'CoinDesk',    url:'https://www.coindesk.com/arc/outboundfeeds/rss/'},
+    {name:'MarketWatch', url:'https://feeds.content.dowjones.io/public/rss/mw_realtimeheadlines'},
+    {name:'Reuters Biz', url:'https://feeds.reuters.com/reuters/businessNews'},
   ]
 };
-
-const CAT_INFO = {
-  tech:    { label: '⚡ TECHNOLOGY', color: 'tech' },
-  world:   { label: '🌍 WORLD NEWS', color: 'world' },
-  finance: { label: '📈 FINANCE',    color: 'finance' },
+const CATS = {
+  tech:{label:'⚡ TECHNOLOGY',cls:'tech'},
+  world:{label:'🌍 WORLD NEWS',cls:'world'},
+  finance:{label:'📈 FINANCE',cls:'finance'},
+  saved:{label:'🔖 SAVED',cls:'saved'}
 };
 
-// ============================================
-// STATE
-// ============================================
-let currentTab = 'tech';
-let cache = { tech: [], world: [], finance: [] };
-let notifEnabled = false;
-let autoRefreshTimer = null;
-let deferredPrompt = null;
-let seenLinks = new Set(JSON.parse(localStorage.getItem('seenLinks') || '[]'));
+let cur='tech', cache={tech:[],world:[],finance:[]};
+let bookmarks=JSON.parse(localStorage.getItem('bm')||'[]');
+let seenLinks=new Set(JSON.parse(localStorage.getItem('sl')||'[]'));
+let notifOn=false, autoT=null, dp=null, curFilter='ALL';
+let isDark=localStorage.getItem('theme')!=='light';
 
-// ============================================
-// CLOCK
-// ============================================
-function updateClock() {
-  const now = new Date();
-  document.getElementById('clock').textContent =
-    now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
-setInterval(updateClock, 1000);
-updateClock();
-
-// ============================================
-// TAB SWITCH
-// ============================================
-function switchTab(tab) {
-  currentTab = tab;
-  document.querySelectorAll('.tab').forEach(t => {
-    t.className = 'tab';
-  });
-  const tabs = document.querySelectorAll('.tab');
-  const idx = ['tech','world','finance'].indexOf(tab);
-  tabs[idx].className = `tab active-${tab}`;
-
-  const info = CAT_INFO[tab];
-  const titleEl = document.getElementById('catTitle');
-  titleEl.textContent = info.label;
-  titleEl.className = `cat-title ${info.color}`;
-
-  if (cache[tab].length > 0) {
-    renderNews(cache[tab], tab);
-  } else {
-    fetchNews(tab);
-  }
-}
-
-// ============================================
-// FETCH NEWS
-// ============================================
-async function fetchNews(tab) {
-  showLoading();
-  const sources = SOURCES[tab];
-  let allItems = [];
-
-  for (const source of sources) {
-    try {
-      const url = `${PROXY}${encodeURIComponent(source.url)}&count=10`;
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data.status === 'ok' && data.items) {
-        const items = data.items.map(item => ({
-          ...item,
-          sourceName: source.name,
-          category: tab
-        }));
-        allItems = allItems.concat(items);
-      }
-    } catch (e) {
-      console.warn('Feed failed:', source.name);
-    }
-  }
-
-  if (allItems.length === 0) {
-    showError(tab);
-    return;
-  }
-
-  // Sort by date
-  allItems.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-
-  // Remove duplicates
-  const seen = new Set();
-  allItems = allItems.filter(item => {
-    if (seen.has(item.link)) return false;
-    seen.add(item.link);
-    return true;
-  });
-
-  cache[tab] = allItems;
-  updateTicker(allItems, tab);
-
-  // Check for new articles
-  const newItems = allItems.filter(item => !seenLinks.has(item.link));
-  if (newItems.length > 0 && notifEnabled && tab === currentTab) {
-    sendNotification(newItems[0], tab);
-  }
-
-  // Mark all as seen
-  allItems.forEach(item => seenLinks.add(item.link));
-  localStorage.setItem('seenLinks', JSON.stringify([...seenLinks].slice(-200)));
-
-  renderNews(allItems, tab);
-}
-
-// ============================================
-// RENDER
-// ============================================
-function renderNews(items, tab) {
-  const container = document.getElementById('newsContainer');
-  const countBadge = document.getElementById('countBadge');
-  countBadge.textContent = `${items.length} articles`;
-
-  container.innerHTML = items.map((item, i) => {
-    const isNew = !seenLinks.has(item.link) || i < 3;
-    const timeAgo = getTimeAgo(item.pubDate);
-    const desc = item.description
-      ? item.description.replace(/<[^>]*>/g, '').trim().slice(0, 120) + '...'
-      : '';
-
-    return `
-      <a class="news-card ${tab}" href="${item.link}" target="_blank" rel="noopener"
-         style="animation-delay: ${i * 0.05}s">
-        <div class="card-meta">
-          <span class="source-badge ${tab}">${item.sourceName}</span>
-          ${i < 3 ? '<span class="new-badge">NEW</span>' : ''}
-          <span class="card-time">${timeAgo}</span>
-        </div>
-        <div class="card-title">${item.title}</div>
-        ${desc ? `<div class="card-desc">${desc}</div>` : ''}
-        <span class="card-arrow">→</span>
-      </a>
-    `;
-  }).join('');
-}
-
-// ============================================
-// LOADING / ERROR
-// ============================================
-function showLoading() {
-  document.getElementById('newsContainer').innerHTML = `
-    <div class="loading-state">
-      ${[1,2,3,4].map(() => `
-        <div class="skeleton">
-          <div class="skel-line short"></div>
-          <div class="skel-line long"></div>
-          <div class="skel-line mid"></div>
-        </div>
-      `).join('')}
-    </div>
-  `;
-  document.getElementById('countBadge').textContent = 'Loading...';
-}
-
-function showError(tab) {
-  document.getElementById('newsContainer').innerHTML = `
-    <div class="error-state">
-      <div class="error-icon">📡</div>
-      <div class="error-text">Could not fetch news. Check your connection.</div>
-      <button class="retry-btn" onclick="fetchNews('${tab}')">Try Again</button>
-    </div>
-  `;
-  document.getElementById('countBadge').textContent = '0 articles';
-}
-
-// ============================================
-// REFRESH
-// ============================================
-function refreshNews() {
-  const btn = document.getElementById('refreshBtn');
-  btn.textContent = '↻';
-  btn.classList.add('loading');
-  cache[currentTab] = [];
-  fetchNews(currentTab).then(() => {
-    btn.classList.remove('loading');
-    btn.textContent = '↻ REFRESH';
-  });
-}
-
-// ============================================
-// TICKER UPDATE
-// ============================================
-function updateTicker(items, tab) {
-  const ticker = document.getElementById('ticker');
-  const top5 = items.slice(0, 5);
-  const label = tab.toUpperCase();
-  const html = top5.map(item =>
-    `<span class="ticker-item"><span>${label}</span> ${item.title}</span>`
-  ).join('');
-  ticker.innerHTML = html + html; // duplicate for infinite scroll
-}
-
-// ============================================
-// TIME AGO
-// ============================================
-function getTimeAgo(dateStr) {
-  const now = new Date();
-  const then = new Date(dateStr);
-  const diff = Math.floor((now - then) / 1000);
-  if (diff < 60) return `${diff}s ago`;
-  if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
-  return `${Math.floor(diff/86400)}d ago`;
-}
-
-// ============================================
-// NOTIFICATIONS
-// ============================================
-async function toggleNotifications() {
-  const btn = document.getElementById('notifBtn');
-  if (notifEnabled) {
-    notifEnabled = false;
-    btn.textContent = '🔔';
-    btn.classList.remove('active');
-    clearInterval(autoRefreshTimer);
-    return;
-  }
-
-  if (!('Notification' in window)) {
-    alert('Notifications not supported in this browser.');
-    return;
-  }
-
-  const perm = await Notification.requestPermission();
-  if (perm === 'granted') {
-    notifEnabled = true;
-    btn.textContent = '🔕';
-    btn.classList.add('active');
-    // Auto refresh every 5 minutes
-    autoRefreshTimer = setInterval(() => {
-      cache[currentTab] = [];
-      fetchNews(currentTab);
-    }, 5 * 60 * 1000);
-    alert('✅ Notifications enabled! News will refresh every 5 minutes.');
-  } else {
-    alert('Please allow notifications to use this feature.');
-  }
-}
-
-function sendNotification(item, tab) {
-  if (!notifEnabled) return;
-  const icons = { tech: '⚡', world: '🌍', finance: '📈' };
-  new Notification(`${icons[tab]} PULSE — ${item.sourceName}`, {
-    body: item.title,
-    icon: '/WebApp/icon.png',
-    badge: '/WebApp/icon.png'
-  });
-}
-
-// ============================================
-// PWA INSTALL
-// ============================================
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById('installBanner').classList.add('show');
-});
-
-document.getElementById('installBtn').addEventListener('click', async () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const result = await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    document.getElementById('installBanner').classList.remove('show');
-  }
-});
-
-// ============================================
-// SERVICE WORKER
-// ============================================
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/WebApp/sw.js').catch(() => {});
-}
-
-// ============================================
-// INIT
-// ============================================
+document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
+updateClock(); setInterval(updateClock,1000);
 fetchNews('tech');
-</script>
-</body>
-</html>
+
+function updateClock(){
+  document.getElementById('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+
+function toggleTheme(){
+  isDark=!isDark;
+  document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
+  localStorage.setItem('theme',isDark?'dark':'light');
+  toast(isDark?'🌙 Dark mode':'☀️ Light mode');
+}
+
+function switchTab(tab){
+  cur=tab; curFilter='ALL';
+  document.getElementById('srchIn').value='';
+  handleSearch('');
+
+  document.querySelectorAll('.tab').forEach(t=>t.className='tab');
+  const tmap=['tech','world','finance','saved'];
+  const clsmap={tech:'at',world:'aw',finance:'af',saved:'as'};
+  const tabs=document.querySelectorAll('.tab');
+  const i=tmap.indexOf(tab);
+  if(i>=0) tabs[i].className=`tab ${clsmap[tab]}`;
+
+  const info=CATS[tab];
+  const el=document.getElementById('catTitle');
+  el.textContent=info.label; el.className=`cat-title ${info.cls}`;
+
+  if(tab==='saved'){renderSaved();buildFilters([]);return;}
+  if(cache[tab].length){buildFilters(cache[tab]);renderCards(cache[tab],tab);}
+  else fetchNews(tab);
+}
+
+async function fetchNews(tab){
+  showLoading();
+  let all=[];
+  for(const src of SOURCES[tab]){
+    try{
+      const r=await fetch(`${PROXY}${encodeURIComponent(src.url)}&count=12`);
+      const d=await r.json();
+      if(d.status==='ok'&&d.items) all=all.concat(d.items.map(i=>({...i,sourceName:src.name,category:tab})));
+    }catch(e){}
+  }
+  if(!all.length){showError(tab);return;}
+  const seen=new Set();
+  all=all.filter(i=>{if(seen.has(i.link))return false;seen.add(i.link);return true;})
+         .sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate));
+  const newI=all.filter(i=>!seenLinks.has(i.link));
+  if(newI.length&&notifOn) sendNotif(newI[0],tab);
+  all.forEach(i=>seenLinks.add(i.link));
+  localStorage.setItem('sl',JSON.stringify([...seenLinks].slice(-300)));
+  cache[tab]=all;
+  updateTicker(all,tab);
+  buildFilters(all);
+  renderCards(all,tab);
+}
+
+function buildFilters(items){
+  const bar=document.getElementById('filterBar');
+  if(!items.length){bar.innerHTML='';return;}
+  const srcs=['ALL',...new Set(items.map(i=>i.sourceName))];
+  bar.innerHTML=srcs.map(s=>`<button class="chip ${curFilter===s?'active':''}" onclick="setFilter('${s}')">${s}</button>`).join('');
+}
+
+function setFilter(s){
+  curFilter=s;
+  buildFilters(cache[cur]);
+  const filtered=s==='ALL'?cache[cur]:cache[cur].filter(i=>i.sourceName===s);
+  renderCards(filtered,cur);
+}
+
+function renderCards(items,tab){
+  const c=document.getElementById('container');
+  document.getElementById('countBadge').textContent=`${items.length} articles`;
+  if(!items.length){
+    c.innerHTML=`<div class="empty"><div class="ico">🔍</div><p>No articles found.</p></div>`;
+    return;
+  }
+  c.innerHTML=`<div class="news-grid">${items.map((item,i)=>{
+    const cat=item.category||tab;
+    const ago=timeAgo(item.pubDate);
+    const desc=(item.description||'').replace(/<[^>]*>/g,'').trim().slice(0,110);
+    const sv=bookmarks.some(b=>b.link===item.link);
+    const safeTitle=item.title.replace(/'/g,"&#39;");
+    const safeLink=encodeURIComponent(item.link);
+    return `<div class="card ${cat}" style="animation-delay:${i*.04}s">
+      <div class="card-top">
+        <span class="src-badge ${cat}">${item.sourceName}</span>
+        ${i<3?'<span class="new-pill">NEW</span>':''}
+        <span class="card-time">${ago}</span>
+      </div>
+      <div class="card-title">${item.title}</div>
+      ${desc?`<div class="card-desc">${desc}...</div>`:''}
+      <div class="card-actions">
+        <button class="c-btn ${sv?'saved-on':''}" onclick="toggleBM(event,${i},'${tab}')">
+          🔖 ${sv?'Saved':'Save'}
+        </button>
+        <button class="c-btn" onclick="shareItem(event,'${safeTitle}','${safeLink}')">
+          🔗 Share
+        </button>
+        <a class="read-lnk" href="${item.link}" target="_blank" rel="noopener">Read →</a>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function renderSaved(){
+  const c=document.getElementById('container');
+  document.getElementById('countBadge').textContent=`${bookmarks.length} saved`;
+  if(!bookmarks.length){
+    c.innerHTML=`<div class="empty"><div class="ico">🔖</div><p>No saved articles yet.<br>Tap 🔖 on any article!</p></div>`;
+    return;
+  }
+  c.innerHTML=`<div class="news-grid">${bookmarks.map((item,i)=>{
+    const cat=item.category||'tech';
+    const ago=timeAgo(item.pubDate);
+    const desc=(item.descriptio
